@@ -1,2 +1,2 @@
-DATA_FILE = "data/data_test.csv"
+DATA_FILE = "data/data.csv"
 WALLET = 500
