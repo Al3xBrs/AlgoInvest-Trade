@@ -66,6 +66,7 @@ def incrementCombination(actions_list, payload):
 
 def saveData(payload):
     i = 1
+    actions_list = actionsList()
     incrementCombination(actions_list, payload)
     combinations = payload["combinations"]
     fullprices = payload["fullprices"]
@@ -82,6 +83,3 @@ def saveData(payload):
             f.write(f"{i}, {comb}, {fp}, {pnl}")
             f.write("\n")
             i += 1
-
-
-actions_list = actionsList()
