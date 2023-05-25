@@ -46,27 +46,31 @@ def incrementCombination(actions_list, payload):
     payload["combinations"] = combinations
     payload["fullprices"] = fullprice
     payload["pnl"] = pnl
+    for k in range(1, len(actions_list)):
+        for j in range(0, len(actions_list) + 1):
+            for i in range(j + 1, len(actions_list) + 1, k):
+                testing_list = actions_list[j:i:k]
+                testing_list_name = [action.name for action in testing_list]
+                if combinations.count(testing_list_name) == 0:
+                    portfolio = Portfolio(testing_list)
 
-    for j in range(0, len(actions_list) + 1):
-        for i in range(j + 1, len(actions_list) + 1):
-            testing_list = actions_list[j:i]
-            portfolio = Portfolio(testing_list)
-
-            if checkWallet(portfolio.getFullActionsPrice) is True:
-                combinations.append([action.name for action in portfolio.actions_list])
-                fullprice.append(portfolio.getFullActionsPrice)
-                pnl.append(portfolio.getPNL)
-                continue
-
-            else:
-                break
+                    if checkWallet(portfolio.getFullActionsPrice) is True:
+                        combinations.append(
+                            [action.name for action in portfolio.actions_list]
+                        )
+                        fullprice.append(portfolio.getFullActionsPrice)
+                        pnl.append(portfolio.getPNL)
+                        continue
 
     return payload
 
 
+actions_list = actionsList()
+
+
 def saveData(payload):
     i = 1
-    actions_list = actionsList()
+
     incrementCombination(actions_list, payload)
     combinations = payload["combinations"]
     fullprices = payload["fullprices"]
