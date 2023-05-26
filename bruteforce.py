@@ -2,6 +2,7 @@ from conf import WALLET, DATA_FILE
 import csv
 from models.action import Action
 from models.portfolio import Portfolio
+from itertools import combinations
 
 
 def actionsList():
@@ -23,6 +24,9 @@ def actionsList():
     return actions_list
 
 
+actions_list = actionsList()
+
+
 def checkWallet(full_price):
     """Check the wallet if it's still ok
 
@@ -39,39 +43,10 @@ def checkWallet(full_price):
         return False
 
 
-def incrementCombination(actions_list, payload):
-    fullprice = []
-    combinations = []
-    pnl = []
-    payload["combinations"] = combinations
-    payload["fullprices"] = fullprice
-    payload["pnl"] = pnl
-    for k in range(1, len(actions_list)):
-        for j in range(0, len(actions_list) + 1):
-            for i in range(j + 1, len(actions_list) + 1, k):
-                testing_list = actions_list[j:i:k]
-                testing_list_name = [action.name for action in testing_list]
-                if combinations.count(testing_list_name) == 0:
-                    portfolio = Portfolio(testing_list)
-
-                    if checkWallet(portfolio.getFullActionsPrice) is True:
-                        combinations.append(
-                            [action.name for action in portfolio.actions_list]
-                        )
-                        fullprice.append(portfolio.getFullActionsPrice)
-                        pnl.append(portfolio.getPNL)
-                        continue
-
-    return payload
-
-
-actions_list = actionsList()
-
-
 def saveData(payload):
     i = 1
 
-    incrementCombination(actions_list, payload)
+    getCombinations(actions_list, payload)
     combinations = payload["combinations"]
     fullprices = payload["fullprices"]
     pnls = payload["pnl"]
@@ -87,3 +62,25 @@ def saveData(payload):
             f.write(f"{i}, {comb}, {fp}, {pnl}")
             f.write("\n")
             i += 1
+
+
+def getCombinations(actions_list, payload):
+    combs = []
+    fullprices = []
+    pnl = []
+    payload["combinations"] = combs
+    payload["fullprices"] = fullprices
+    payload["pnl"] = pnl
+
+    for k in range(1, len(actions_list)):
+        testing_list = combinations(actions_list, k)
+
+        for comb in list(testing_list):
+            portfolio = Portfolio(comb)
+            if checkWallet(portfolio.getFullActionsPrice) is True:
+                combs.append([action.name for action in portfolio.actions_list])
+                fullprices.append(portfolio.getFullActionsPrice)
+                pnl.append(portfolio.getPNL)
+                continue
+
+    return payload
