@@ -77,7 +77,7 @@ def saveBestComb(payload):
 
 
 def getCombinations(actions_list, payload):
-    former_profit = 0
+    former_price = 0
     best_comb = []
     combs = []
     fullprices = []
@@ -96,8 +96,8 @@ def getCombinations(actions_list, payload):
                 fullprices.append(portfolio.getFullActionsPrice)
                 pnl.append(portfolio.getPNL)
 
-                new_best_comb, former_profit = getBestComb(
-                    portfolio, best_comb, former_profit
+                new_best_comb, former_price = getBestComb(
+                    portfolio, best_comb, former_price
                 )
                 best_comb = new_best_comb
 
@@ -105,26 +105,18 @@ def getCombinations(actions_list, payload):
     return payload
 
 
-def getProfitFullActions(portfolio):
-    if portfolio.getFullActionsPrice == 0:
-        profit = 0
-    else:
-        profit = round((portfolio.getPNL * 100) / portfolio.getFullActionsPrice, 2)
+def getBestComb(portfolio, best_comb, former_price):
+    """"""
 
-    return float(profit)
-
-
-def getBestComb(portfolio, best_comb, former_profit):
-    new_profit = getProfitFullActions(portfolio)
+    new_price = portfolio.getFullActionsPrice
 
     if len(best_comb) == 0:
         best_comb.append(portfolio.actions_list)
 
-    elif len(best_comb) == 1 and new_profit > former_profit:
+    elif len(best_comb) == 1 and new_price > former_price:
         ac_list = [*best_comb[0]]
-        former_list = [action for action in ac_list]
-        last_portfolio = Portfolio(former_list)
-        former_profit = getProfitFullActions(last_portfolio)
+        last_portfolio = Portfolio(ac_list)
+        former_price = last_portfolio.getFullActionsPrice
         best_comb.clear()
         best_comb.append(portfolio.actions_list)
-    return best_comb, former_profit
+    return best_comb, former_price
