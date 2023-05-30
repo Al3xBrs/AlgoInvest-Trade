@@ -24,9 +24,6 @@ def actionsList():
     return actions_list
 
 
-actions_list = actionsList()
-
-
 def checkWallet(full_price):
     """Check the wallet if it's still ok
 
