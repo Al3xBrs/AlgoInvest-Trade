@@ -19,7 +19,7 @@ def actionsList():
     with open(DATA_FILE, "r") as f:
         obj = csv.reader(f, delimiter=",")
         for name, price, profitPerCent in obj:
-            actions_list.append(Action(name, price, profitPerCent))
+            actions_list.append(Action(name, price, profitPerCent, 1))
 
     return actions_list
 
