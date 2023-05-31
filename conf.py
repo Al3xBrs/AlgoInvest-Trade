@@ -1,2 +1,2 @@
-DATA_FILE = "data/dataset1_Python+P7.csv"
-WALLET = 500
+DATA_FILE = "data/dataset2_Python+P7.csv"
+WALLET = 500.00

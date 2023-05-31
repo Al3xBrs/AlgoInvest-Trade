@@ -34,30 +34,43 @@ def actionsList():
 
 actions_list = actionsList()
 sorted_list = sorted(actions_list, key=lambda x: x.profitE, reverse=True)
+best_actions_list = sorted_list[0:20]
 
 
 def isAdmissible(portfolio):
-    if portfolio.getFullActionsPrice > WALLET:
-        return False
-    else:
+    if portfolio.getFullActionsPrice < WALLET:
         return True
+    else:
+        return False
 
 
-def getCombinations(sorted_list):
+def getCombinations(best_actions_list):
     combs = []
+    admissible_portfolio = []
+    for i in range(1, len(best_actions_list)):
+        combs.append(list(combinations(best_actions_list, i)))
 
-    for i in range(1, len(sorted_list)):
-        testing_list = combinations(sorted_list, i)
-        for comb in testing_list:
-            portfolio = Portfolio(comb)
-            if isAdmissible(portfolio):
-                combs.append(comb[0:-1])
+    for comb in combs:
+        for portfolio in comb:
+            portfolio_testing = Portfolio(portfolio)
 
-            else:
-                break
+            if isAdmissible(portfolio_testing):
+                admissible_portfolio.append(portfolio_testing)
 
-    return combs
+    return admissible_portfolio
 
 
-combs = getCombinations(sorted_list)
-print(combs)
+def getBestComb(admissible_portfolio):
+    sorted_portfolio = sorted(
+        admissible_portfolio, key=lambda x: x.getPNL, reverse=True
+    )
+    return (
+        sorted_portfolio[0].getFullActionsPrice,
+        sorted_portfolio[0].getPNL,
+        sorted_portfolio[0].actions_list,
+    )
+
+
+admissible_portfolio = getCombinations(best_actions_list)
+best_portfolio = getBestComb(admissible_portfolio)
+print(best_portfolio)
