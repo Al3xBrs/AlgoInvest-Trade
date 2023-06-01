@@ -19,7 +19,13 @@ def actionsList():
     with open(DATA_FILE, "r") as f:
         obj = csv.reader(f, delimiter=",")
         for name, price, profitPerCent in obj:
-            actions_list.append(Action(name, price, profitPerCent, 1))
+            actions_list.append(
+                Action(
+                    name,
+                    int(float(price) * 100),
+                    round((float(profitPerCent) / 100) * (float(price) * 100), 2),
+                )
+            )
 
     return actions_list
 
@@ -56,7 +62,7 @@ def saveCombs(payload):
             comb = (
                 str(combinations[j]).replace(",", " ").replace("[", "").replace("]", "")
             )
-            f.write(f"{i}, {comb}, {fp}, {pnl}")
+            f.write(f"{i}, {comb}, {float(fp)/100}, {float(pnl)/100}")
             f.write("\n")
             i += 1
 
@@ -73,7 +79,7 @@ def saveBestComb(payload):
     with open("./Results/best_comb.csv", "w") as f:
         f.write("Num,Combinations,Price,PNL")
         f.write("\n")
-        f.write(f"1,{act_csv},{price_best_comb},{best_pnl}")
+        f.write(f"1,{act_csv},{float(price_best_comb)/100},{float(best_pnl)/100}")
 
 
 def getCombinations(actions_list, payload):

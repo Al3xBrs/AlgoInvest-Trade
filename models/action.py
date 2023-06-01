@@ -1,14 +1,13 @@
 class Action:
     """"""
 
-    def __init__(self, name, price, profitPerCent, profitE) -> None:
+    def __init__(self, name, price, profitEuro) -> None:
         self.name = name
         self.price = price
-        self.profitPerCent = profitPerCent
-        self.profitE = profitE
+        self.profitEuro = profitEuro
 
-    @property
-    def profitEuro(self):
-        profitfloat = (float(self.profitPerCent) / 100) * float(self.price)
-        profit = round(profitfloat, 2)
-        return profit
+    # @property
+    # def profitEuro(self):
+    #     profitfloat = (self.profitPerCent / 100) * self.price
+    #     profit = profitfloat
+    #     return profit

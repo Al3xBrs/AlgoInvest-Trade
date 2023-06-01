@@ -3,6 +3,7 @@ import csv
 from models.action import Action
 from models.portfolio import Portfolio
 from itertools import combinations
+import numpy as np
 
 
 def actionsList():
@@ -19,58 +20,48 @@ def actionsList():
     with open(DATA_FILE, "r") as f:
         obj = csv.reader(f, delimiter=",")
         for name, price, profitPerCent in obj:
-            if 1 < float(price) < WALLET and float(profitPerCent) > 1:
+            if float(price) > 0:
                 actions_list.append(
                     Action(
                         name,
-                        float(price),
-                        float(profitPerCent),
-                        round((float(profitPerCent) / 100) * float(price), 2),
+                        int(float(price) * 100),
+                        round((float(profitPerCent) / 100) * (float(price) * 100), 2),
                     )
                 )
 
     return actions_list
 
 
-actions_list = actionsList()
-sorted_list = sorted(actions_list, key=lambda x: x.profitE, reverse=True)
-best_actions_list = sorted_list[0:20]
+actions_dict = [action.__dict__ for action in actionsList()]
 
 
-def isAdmissible(portfolio):
-    if portfolio.getFullActionsPrice < WALLET:
-        return True
-    else:
-        return False
+def bestComb(WALLET, actions_dict):
+    matrice = [[0 for x in range(WALLET + 1)] for x in range(len(actions_dict) + 1)]
+    for i in range(1, len(actions_dict) + 1):
+        for j in range(1, WALLET + 1):
+            if actions_dict[i - 1]["price"] <= j:
+                matrice[i][j] = max(
+                    actions_dict[i - 1]["profitEuro"]
+                    + matrice[i - 1][j - actions_dict[i - 1]["price"]],
+                    matrice[i - 1][j],
+                )
+            else:
+                matrice[i][j] = matrice[i - 1][j]
+
+    best_comb = []
+    n = len(actions_dict)
+    w = WALLET
+    while w > 0 and n > 0:
+        action = actions_dict[n - 1]
+        if matrice[n][w] == matrice[n - 1][w - action["price"]] + action["profitEuro"]:
+            best_comb.append(action)
+            w -= action["price"]
+
+        n -= 1
+
+    a = [action["name"] for action in best_comb]
+    tot = sum([action["price"] for action in best_comb])
+    return round(matrice[-1][-1] / 100, 2), a, round(tot / 100, 2)
 
 
-def getCombinations(best_actions_list):
-    combs = []
-    admissible_portfolio = []
-    for i in range(1, len(best_actions_list)):
-        combs.append(list(combinations(best_actions_list, i)))
-
-    for comb in combs:
-        for portfolio in comb:
-            portfolio_testing = Portfolio(portfolio)
-
-            if isAdmissible(portfolio_testing):
-                admissible_portfolio.append(portfolio_testing)
-
-    return admissible_portfolio
-
-
-def getBestComb(admissible_portfolio):
-    sorted_portfolio = sorted(
-        admissible_portfolio, key=lambda x: x.getPNL, reverse=True
-    )
-    return (
-        sorted_portfolio[0].getFullActionsPrice,
-        sorted_portfolio[0].getPNL,
-        sorted_portfolio[0].actions_list,
-    )
-
-
-admissible_portfolio = getCombinations(best_actions_list)
-best_portfolio = getBestComb(admissible_portfolio)
-print(best_portfolio)
+print(bestComb(WALLET, actions_dict))
