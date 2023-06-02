@@ -3,7 +3,7 @@ import csv
 from models.action import Action
 from models.portfolio import Portfolio
 from itertools import combinations
-import numpy as np
+import time
 
 
 def actionsList():
@@ -64,4 +64,7 @@ def bestComb(WALLET, actions_dict):
     return round(matrice[-1][-1] / 100, 2), a, round(tot / 100, 2)
 
 
+start_time = time.time()
 print(bestComb(WALLET, actions_dict))
+end_time = time.time()
+print("durée total : ", round(end_time - start_time, 2), "s")
