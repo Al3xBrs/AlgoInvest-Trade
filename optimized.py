@@ -1,8 +1,6 @@
 from conf import DATA_FILE, WALLET
 import csv
 from models.action import Action
-from models.portfolio import Portfolio
-from itertools import combinations
 import time
 
 
