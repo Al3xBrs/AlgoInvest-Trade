@@ -1,33 +1,6 @@
-from conf import WALLET, DATA_FILE
-import csv
-from models.action import Action
+from conf import WALLET
 from models.portfolio import Portfolio
 from itertools import combinations
-
-
-def actionsList():
-    """Get data from .csv file
-
-    Args:
-        DATA_FILE: .csv file with data
-
-    Returns:
-        list : actions dicts list
-    """
-
-    actions_list = []
-    with open(DATA_FILE, "r") as f:
-        obj = csv.reader(f, delimiter=",")
-        for name, price, profitPerCent in obj:
-            actions_list.append(
-                Action(
-                    name,
-                    int(float(price) * 100),
-                    round((float(profitPerCent) / 100) * (float(price) * 100), 2),
-                )
-            )
-
-    return actions_list
 
 
 def checkWallet(full_price):
@@ -114,7 +87,9 @@ def getCombinations(actions_list, payload):
 def getBestComb(portfolio, best_comb, former_price):
     """"""
 
-    new_price = portfolio.getFullActionsPrice
+    # new_price = round((100 * portfolio.getPNL) / portfolio.getFullActionsPrice, 2)
+
+    new_price = portfolio.getPNL
 
     if len(best_comb) == 0:
         best_comb.append(portfolio.actions_list)
@@ -122,7 +97,10 @@ def getBestComb(portfolio, best_comb, former_price):
     elif len(best_comb) == 1 and new_price > former_price:
         ac_list = [*best_comb[0]]
         last_portfolio = Portfolio(ac_list)
-        former_price = last_portfolio.getFullActionsPrice
+        # former_price = round(
+        #     (last_portfolio.getPNL * 100) / last_portfolio.getFullActionsPrice, 2
+        # )
+        former_price = last_portfolio.getPNL
         best_comb.clear()
         best_comb.append(portfolio.actions_list)
     return best_comb, former_price

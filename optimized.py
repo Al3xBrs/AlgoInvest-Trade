@@ -1,39 +1,8 @@
-from conf import DATA_FILE, WALLET
-import csv
-from models.action import Action
-import time
+from conf import WALLET
 
 
-def actionsList():
-    """Get data from .csv file
-
-    Args:
-        DATA_FILE: .csv file with data
-
-    Returns:
-        list : actions dicts list
-    """
-
-    actions_list = []
-    with open(DATA_FILE, "r") as f:
-        obj = csv.reader(f, delimiter=",")
-        for name, price, profitPerCent in obj:
-            if float(price) > 0:
-                actions_list.append(
-                    Action(
-                        name,
-                        int(float(price) * 100),
-                        round((float(profitPerCent) / 100) * (float(price) * 100), 2),
-                    )
-                )
-
-    return actions_list
-
-
-actions_dict = [action.__dict__ for action in actionsList()]
-
-
-def bestComb(WALLET, actions_dict):
+def bestComb(payload):
+    actions_dict = payload["actions_dict"]
     matrice = [[0 for x in range(WALLET + 1)] for x in range(len(actions_dict) + 1)]
     for i in range(1, len(actions_dict) + 1):
         for j in range(1, WALLET + 1):
@@ -57,12 +26,25 @@ def bestComb(WALLET, actions_dict):
 
         n -= 1
 
-    a = [action["name"] for action in best_comb]
-    tot = sum([action["price"] for action in best_comb])
-    return round(matrice[-1][-1] / 100, 2), a, round(tot / 100, 2)
+    payload["total_price_opti"] = round(
+        (sum([action["price"] for action in best_comb])) / 100, 2
+    )
+    payload["actions_name_opti"] = [action["name"] for action in best_comb]
+    payload["best_pnl_opti"] = round(matrice[-1][-1] / 100, 2)
+    return payload
 
 
-start_time = time.time()
-print(bestComb(WALLET, actions_dict))
-end_time = time.time()
-print("durée total : ", round(end_time - start_time, 2), "s")
+def saveBestCombOpti(payload):
+    """"""
+
+    action_best_comb = payload["actions_name_opti"]
+    act_csv = str(action_best_comb).replace(",", " ").replace("[", "").replace("]", "")
+
+    price_best_comb = payload["total_price_opti"]
+
+    best_pnl = payload["best_pnl_opti"]
+
+    with open("./Results/best_comb_opti.csv", "w") as f:
+        f.write("Num,Combinations,Price,PNL")
+        f.write("\n")
+        f.write(f"1,{act_csv},{float(price_best_comb)},{float(best_pnl)}")
