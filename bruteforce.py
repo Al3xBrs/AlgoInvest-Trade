@@ -4,15 +4,7 @@ from itertools import combinations
 
 
 def checkWallet(full_price):
-    """Check the wallet if it's still ok
-
-    Args:
-        full_price (int): Full price of an actions list
-
-    Returns:
-        Boolean: True if Wallet still ok
-                 False if wallet can't
-    """
+    """Return True if the portfolio is available"""
     if WALLET > full_price:
         return True
     else:
@@ -20,6 +12,7 @@ def checkWallet(full_price):
 
 
 def saveCombs(payload):
+    """Save all the possibles combs in .csv"""
     i = 1
 
     combinations = payload["combinations"]
@@ -41,6 +34,7 @@ def saveCombs(payload):
 
 
 def saveBestComb(payload):
+    """Save the only best comb in .csv"""
     best_comb = [*payload["best_comb"][0]]
     best_portfolio = Portfolio(best_comb)
 
@@ -56,6 +50,7 @@ def saveBestComb(payload):
 
 
 def getCombinations(actions_list, payload):
+    """Load all the possible combinations"""
     former_price = 0
     best_comb = []
     combs = []
@@ -85,7 +80,7 @@ def getCombinations(actions_list, payload):
 
 
 def getBestComb(portfolio, best_comb, former_price):
-    """"""
+    """Find the best combination"""
 
     # new_price = round((100 * portfolio.getPNL) / portfolio.getFullActionsPrice, 2)
 

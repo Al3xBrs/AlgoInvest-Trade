@@ -1,19 +1,12 @@
 import csv
 from models.action import Action
 
-DATA_FILE = "data/data.csv"
+DATA_FILE = "data/dataset2_Python+P7.csv"
 WALLET = 500 * 100
 
 
 def actionsList():
-    """Get data from .csv file
-
-    Args:
-        DATA_FILE: .csv file with data
-
-    Returns:
-        list : actions dicts list
-    """
+    """Get data from .csv file"""
 
     actions_list = []
     with open(DATA_FILE, "r") as f:
