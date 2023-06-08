@@ -1,7 +1,6 @@
-from models.action import Action
-
-
 class Portfolio:
+    """Portfolio from an actions list"""
+
     def __init__(self, actions_list=[]) -> None:
         self.actions_list = actions_list
 

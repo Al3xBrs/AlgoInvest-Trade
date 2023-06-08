@@ -1,7 +1,7 @@
 import csv
 from models.action import Action
 
-DATA_FILE = "data/dataset2_Python+P7.csv"
+DATA_FILE = "data/data.csv"
 WALLET = 500 * 100
 
 

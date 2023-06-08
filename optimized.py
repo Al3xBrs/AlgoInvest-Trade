@@ -2,6 +2,7 @@ from conf import WALLET
 
 
 def bestComb(payload):
+    """Calculate the best PNL profit with a matrix"""
     actions_dict = payload["actions_dict"]
     matrice = [[0 for x in range(WALLET + 1)] for x in range(len(actions_dict) + 1)]
     for i in range(1, len(actions_dict) + 1):
@@ -35,7 +36,7 @@ def bestComb(payload):
 
 
 def saveBestCombOpti(payload):
-    """"""
+    """Save the best comb from optimized algo"""
 
     action_best_comb = payload["actions_name_opti"]
     act_csv = str(action_best_comb).replace(",", " ").replace("[", "").replace("]", "")
