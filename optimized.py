@@ -3,10 +3,14 @@ from conf import WALLET
 
 def bestComb(payload):
     """Calculate the best PNL profit with a matrix"""
+
+    w = WALLET
     actions_dict = payload["actions_dict"]
-    matrice = [[0 for x in range(WALLET + 1)] for x in range(len(actions_dict) + 1)]
-    for i in range(1, len(actions_dict) + 1):
-        for j in range(1, WALLET + 1):
+    n = len(actions_dict)
+    matrice = [[0 for x in range(w + 1)] for x in range(n + 1)]
+
+    for i in range(1, n + 1):
+        for j in range(1, w + 1):
             if actions_dict[i - 1]["price"] <= j:
                 matrice[i][j] = max(
                     actions_dict[i - 1]["profitEuro"]
@@ -17,8 +21,7 @@ def bestComb(payload):
                 matrice[i][j] = matrice[i - 1][j]
 
     best_comb = []
-    n = len(actions_dict)
-    w = WALLET
+
     while w > 0 and n > 0:
         action = actions_dict[n - 1]
         if matrice[n][w] == matrice[n - 1][w - action["price"]] + action["profitEuro"]:
